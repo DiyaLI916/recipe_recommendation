@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
-from model import KGNN_LS
+from model import GNN
+from model2 import BaseGraphSage
 
 
 def train(args, data, show_loss, show_topk):
@@ -9,14 +10,21 @@ def train(args, data, show_loss, show_topk):
     adj_entity, adj_relation = data[7], data[8]
 
     interaction_table, offset = get_interaction_table(train_data, n_entity)
-    model = KGNN_LS(args, n_user, n_entity, n_relation, adj_entity, adj_relation, interaction_table, offset)
-
     # top-K evaluation settings
     user_list, train_record, test_record, item_set, k_list = topk_settings(show_topk, train_data, test_data, n_item)
+    # print(user_list)
+    model = GNN(args, n_user, n_entity, n_relation, adj_entity, adj_relation, interaction_table, offset)
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         interaction_table.init.run()
+        variable_names = [v.name for v in tf.global_variables()]
+        values = sess.run(variable_names)
+        for k, v in zip(variable_names, values):
+            print("Variable: ", k)
+            print("Shape: ", v.shape)
+            # print(v)
+        # exit()
 
         for step in range(args.n_epochs):
             # training
@@ -28,6 +36,7 @@ def train(args, data, show_loss, show_topk):
                 start += args.batch_size
                 if show_loss:
                     print(start, loss)
+                # exit()
 
             # CTR evaluation
             train_auc, train_f1 = ctr_eval(sess, model, train_data, args.batch_size)

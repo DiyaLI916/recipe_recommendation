@@ -3,7 +3,7 @@ from aggregators import SumAggregator, LabelAggregator
 from sklearn.metrics import f1_score, roc_auc_score
 
 
-class KGNN_LS(object):
+class GNN(object):
     def __init__(self, args, n_user, n_entity, n_relation, adj_entity, adj_relation, interaction_table, offset):
         self._parse_args(args, adj_entity, adj_relation, interaction_table, offset)
         self._build_inputs()
@@ -38,11 +38,11 @@ class KGNN_LS(object):
 
     def _build_model(self, n_user, n_entity, n_relation):
         self.user_emb_matrix = tf.get_variable(
-            shape=[n_user, self.dim], initializer=KGNN_LS.get_initializer(), name='user_emb_matrix')
+            shape=[n_user, self.dim], initializer=GNN.get_initializer(), name='user_emb_matrix')
         self.entity_emb_matrix = tf.get_variable(
-            shape=[n_entity, self.dim], initializer=KGNN_LS.get_initializer(), name='entity_emb_matrix')
+            shape=[n_entity, self.dim], initializer=GNN.get_initializer(), name='entity_emb_matrix')
         self.relation_emb_matrix = tf.get_variable(
-            shape=[n_relation, self.dim], initializer=KGNN_LS.get_initializer(), name='relation_emb_matrix')
+            shape=[n_relation, self.dim], initializer=GNN.get_initializer(), name='relation_emb_matrix')
 
         # [batch_size, dim]
         self.user_embeddings = tf.nn.embedding_lookup(self.user_emb_matrix, self.user_indices)
@@ -51,6 +51,9 @@ class KGNN_LS(object):
         # dimensions of entities:
         # {[batch_size, 1], [batch_size, n_neighbor], [batch_size, n_neighbor^2], ..., [batch_size, n_neighbor^n_iter]}
         entities, relations = self.get_neighbors(self.item_indices)
+        # not work
+        print(entities, 'entities')
+        print(relations, 'relations')
 
         # [batch_size, dim]
         self.item_embeddings, self.aggregators = self.aggregate(entities, relations)
@@ -66,6 +69,7 @@ class KGNN_LS(object):
         seeds = tf.expand_dims(seeds, axis=1)
         entities = [seeds]
         relations = []
+        # n_iter = 2
         for i in range(self.n_iter):
             neighbor_entities = tf.reshape(tf.gather(self.adj_entity, entities[i]), [self.batch_size, -1])
             neighbor_relations = tf.reshape(tf.gather(self.adj_relation, entities[i]), [self.batch_size, -1])
@@ -173,6 +177,8 @@ class KGNN_LS(object):
 
     def eval(self, sess, feed_dict):
         labels, scores = sess.run([self.labels, self.scores_normalized], feed_dict)
+        # print(labels)
+
         auc = roc_auc_score(y_true=labels, y_score=scores)
         scores[scores >= 0.5] = 1
         scores[scores < 0.5] = 0

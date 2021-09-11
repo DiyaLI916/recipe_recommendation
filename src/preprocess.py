@@ -17,7 +17,6 @@ def read_item_index_to_entity_id_file():
         entity_id2index[satori_id] = i
         i += 1
 
-
 def convert_rating():
     file = '../data/' + DATASET + '/' + RATING_FILE_NAME[DATASET]
 

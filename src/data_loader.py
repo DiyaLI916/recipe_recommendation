@@ -29,7 +29,7 @@ def load_rating(args):
 
 
 def dataset_split(rating_np, args):
-    print('splitting dataset ...')
+    print('splitting dataset by random choice ...')
 
     # train:eval:test = 6:2:2
     eval_ratio = 0.2
@@ -60,11 +60,16 @@ def load_kg(args):
         np.save(kg_file + '.npy', kg_np)
 
     n_entity = len(set(kg_np[:, 0]) | set(kg_np[:, 2]))
+    print('n_entity', n_entity)
+
     n_relation = len(set(kg_np[:, 1]))
+    print('n_relation', set(kg_np[:, 1]))
 
     kg = construct_kg(kg_np)
-    adj_entity, adj_relation = construct_adj(args, kg, n_entity)
+    # 23574: [(744, 6), (456, 6), (552, 6)]
+    # print(kg)
 
+    adj_entity, adj_relation = construct_adj(args, kg, n_entity)
     return n_entity, n_relation, adj_entity, adj_relation
 
 
@@ -91,7 +96,12 @@ def construct_adj(args, kg, entity_num):
     # each line of adj_relation stores the corresponding sampled neighbor relations
     adj_entity = np.zeros([entity_num, args.neighbor_sample_size], dtype=np.int64)
     adj_relation = np.zeros([entity_num, args.neighbor_sample_size], dtype=np.int64)
+    # print(adj_entity.shape, adj_relation.shape)
+    # print(args.neighbor_sample_size)
+    # exit()
     for entity in range(entity_num):
+        # print(len(kg.keys()), type(adj_entity), type(adj_relation))
+        # exit()
         neighbors = kg[entity]
         n_neighbors = len(neighbors)
         if n_neighbors >= args.neighbor_sample_size:
