@@ -22,9 +22,6 @@ def test_restaurant_data():
         k3 = int(row[1])
         u.append(user)
         kg2.append(k3)
-    # len: 321038 23416418 23416418
-    # len set: 28115 1362 2298698
-    # observation: only a small kg set are engaged in user_item...
     print(len(set(kg1)), len(set(kg2)), len(set(u)))
 
 def test_recipe_data():
@@ -81,21 +78,6 @@ def test_recipe_data():
     for i in range(len(kg_idx)):
         temp.append(i)
     kg_dict = dict(zip(kg_idx, temp))
-
-    # make new rating files ...
-    # new_rate = open('ratings_final.txt', 'w')
-    # for row in filtered_u_i:
-    #     row0 = row.strip().split('\t')
-    #     u0 = int(row0[0])
-    #     k3 = int(row0[1])
-    #     score = row0[2]
-    #
-    #     line = str(u_dict[u0]) + '\t' + str(kg_dict[k3]) + '\t' + score + '\n'
-    #     # print(line)
-    #     new_rate.write(line)
-    #
-    # print(len(filtered_u_i))
-    # print(len(u_idx), len(kg_idx))
 
     # make new kg files ...
     extra_kg = list(set(kg1) - intersection)
