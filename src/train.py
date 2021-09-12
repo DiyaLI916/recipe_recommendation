@@ -3,7 +3,6 @@ import numpy as np
 from model import GNN
 from model2 import BaseGraphSage
 
-
 def train(args, data, show_loss, show_topk):
     n_user, n_item, n_entity, n_relation = data[0], data[1], data[2], data[3]
     train_data, eval_data, test_data = data[4], data[5], data[6]

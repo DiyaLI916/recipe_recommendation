@@ -20,8 +20,8 @@ parser.add_argument('--ls_weight', type=float, default=0.5, help='weight of LS r
 parser.add_argument('--lr', type=float, default=2e-2, help='learning rate')
 
 show_loss = True
-show_time = True
-show_topk = True
+show_time = False
+show_topk = False
 
 t = time()
 

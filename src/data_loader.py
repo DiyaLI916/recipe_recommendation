@@ -9,7 +9,6 @@ def load_data(args):
 
     return n_user, n_item, n_entity, n_relation, train_data, eval_data, test_data, adj_entity, adj_relation
 
-
 def load_rating(args):
     print('reading rating file ...')
 
